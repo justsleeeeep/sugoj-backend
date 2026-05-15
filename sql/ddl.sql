@@ -48,8 +48,34 @@ create table if not exists post
 create table if not exists question
 (
     id            bigint auto_increment comment 'id' primary key,
-    title         varchar(512)                       null comment '标题'
-    content       text                               null comment '内容'
-    tags          varchar(1024)                      null comment '标签列表(json数组)'
-
+    title         varchar(512)                       null comment '标题',
+    content       text                               null comment '内容',
+    tags          varchar(1024)                      null comment '标签列表(json数组)',
+    answer        text                               null comment '题目答案',
+    submitNum     int          default 0  not null   comment '题目提交数',
+    acceptNum     int          default 0  not null   comment '题目通过数',
+    judgeCase     text                               null comment '判题用例json',
+    judgeConfig     text                               null comment '判题配置json',
+    userId        bigint                             not null comment '创建用户 id',
+    createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete      tinyint  default 0                 not null comment '是否删除',
+    index  idx_userId(userId)
     ) comment '题目';
+
+    -- 题目提交表
+    create table if not exists question_submit
+    (
+        id            bigint auto_increment comment 'id' primary key,
+        userId        bigint                             not null comment '用户id',
+        questionId    bigint                             not null comment '题目id',
+        language      varchar(128)                       not null comment '编程语言',
+        code          text                               not null comment '用户代码',
+        judgeInfo     text                               null comment '判题信息json',
+        status        int          default 0             not null   comment '判题状态(0-待判题 1-判题中 2-成功 3-失败)',
+        createTime    datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+        updateTime    datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+        isDelete      tinyint  default 0                 not null comment '是否删除',
+        index  idx_userId(userId),
+        index  idx_questionId(questionId)
+        ) comment '题目提交';
