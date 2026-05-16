@@ -1,21 +1,18 @@
-package com.sug.project.model.entity;
+package com.sug.project.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
-
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-/**
- * 题目
- * @TableName question
- */
-@TableName(value ="question")
+import java.util.Date;
+import java.util.List;
+
 @Data
-public class Question {
+public class QuestionVO {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -31,12 +28,7 @@ public class Question {
     /**
      * 标签列表(json数组)
      */
-    private String tags;
-
-    /**
-     * 题目答案
-     */
-    private String answer;
+    private List<String> tags;
 
     /**
      * 题目提交数
@@ -47,11 +39,6 @@ public class Question {
      * 题目通过数
      */
     private Integer acceptNum;
-
-    /**
-     * 判题用例json
-     */
-    private String judgeCase;
 
     /**
      * 判题配置json
@@ -73,9 +60,4 @@ public class Question {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
 }
