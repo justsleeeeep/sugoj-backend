@@ -1,5 +1,6 @@
 package com.sug.project.service;
 
+import com.sug.project.model.entity.Question;
 import com.sug.project.model.entity.QuestionSubmit;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,5 +10,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2026-05-15 15:40:01
 */
 public interface QuestionSubmitService extends IService<QuestionSubmit> {
+    void validQuestionSubmit(QuestionSubmit questionSubmit, boolean isadd);
 
 }
