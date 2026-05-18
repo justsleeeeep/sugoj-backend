@@ -10,7 +10,20 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface QuestionService extends IService<Question> {
 
+    /**
+     * 问题校验
+     *
+     * @param question
+     * @param isadd
+     * @return
+     */
     void validQuestion(Question question, boolean isadd);
+    /**
+     * 增加题目提交数
+     *
+     * @param questionId;
+     * @return
+     */
     void incrementSubmitNum(Long questionId);
 
 }

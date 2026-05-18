@@ -11,6 +11,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2026-05-15 15:40:01
 */
 public interface QuestionSubmitService extends IService<QuestionSubmit> {
+    /**
+     * 题目提交校验
+     *
+     * @param questionSubmit
+     * @param isadd
+     * @return
+     */
     void validQuestionSubmit(QuestionSubmit questionSubmit, boolean isadd);
 
     /**
