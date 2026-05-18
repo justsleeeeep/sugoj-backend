@@ -1,14 +1,19 @@
 package com.sug.project.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sug.project.common.ErrorCode;
 import com.sug.project.exception.BusinessException;
-import com.sug.project.model.entity.Question;
+import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.QuestionSubmit;
+import com.sug.project.model.entity.User;
 import com.sug.project.service.QuestionSubmitService;
 import com.sug.project.mapper.QuestionSubmitMapper;
+import com.sug.project.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
 * @author 钱晨
@@ -18,6 +23,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
     implements QuestionSubmitService{
+
+    @Resource
+    private UserService userService;
+
+    @Override
+    public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        QueryWrapper<QuestionSubmit> queryWrapper = new QueryWrapper<>();
+        if (questionSubmitQueryRequest == null) {
+            return queryWrapper;
+        }
+        Long questionId = questionSubmitQueryRequest.getQuestionId();
+        String language = questionSubmitQueryRequest.getLanguage();
+        String userAccount = questionSubmitQueryRequest.getUserAccount();
+        queryWrapper.eq(questionId != null, "questionId", questionId);
+        queryWrapper.eq(StringUtils.isNotBlank(language), "language", language);
+        if (StringUtils.isNotBlank(userAccount)) {
+            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+            userQueryWrapper.eq("userAccount", userAccount);
+            User user = userService.getOne(userQueryWrapper);
+            if (user == null) {
+                queryWrapper.eq("userId", -1);
+            } else {
+                queryWrapper.eq("userId", user.getId());
+            }
+        }
+        queryWrapper.orderByDesc("createTime");
+        return queryWrapper;
+    }
+
     @Override
     public void validQuestionSubmit(QuestionSubmit questionSubmit, boolean isadd) {
         if (questionSubmit == null) {

@@ -11,5 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface QuestionService extends IService<Question> {
 
     void validQuestion(Question question, boolean isadd);
+    void incrementSubmitNum(Long questionId);
 
 }

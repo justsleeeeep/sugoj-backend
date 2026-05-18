@@ -1,5 +1,6 @@
 package com.sug.project.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sug.project.common.ErrorCode;
 import com.sug.project.exception.BusinessException;
@@ -17,6 +18,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     implements QuestionService {
+
+    @Override
+    public void incrementSubmitNum(Long questionId) {
+        LambdaUpdateWrapper<Question> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(Question::getId, questionId)
+                .setSql("submit_num = submit_num + 1");
+        boolean success = this.update(wrapper);
+        if (!success) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "题目不存在");
+        }
+    }
     @Override
     public void validQuestion(Question question, boolean isadd) {
         if (question == null) {

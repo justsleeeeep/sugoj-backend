@@ -1,6 +1,7 @@
 package com.sug.project.service;
 
-import com.sug.project.model.entity.Question;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.QuestionSubmit;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -11,5 +12,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface QuestionSubmitService extends IService<QuestionSubmit> {
     void validQuestionSubmit(QuestionSubmit questionSubmit, boolean isadd);
+
+    /**
+     * 获取查询条件
+     *
+     * @param questionSubmitQueryRequest
+     * @return
+     */
+    QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
 
 }
