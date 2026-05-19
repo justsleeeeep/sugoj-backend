@@ -43,4 +43,17 @@ public enum QuestionSubmitLanguageEnum {
                 .map(item -> item.value)
                 .collect(Collectors.toList());
     }
+    public static QuestionSubmitLanguageEnum getEnumByValue(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        for (QuestionSubmitLanguageEnum anEnum : QuestionSubmitLanguageEnum.values()) {
+            if (anEnum.value.equals(value)) {
+                return anEnum;
+            }
+        }
+
+        return null;
+    }
 }

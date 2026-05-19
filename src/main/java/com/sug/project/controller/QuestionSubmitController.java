@@ -9,6 +9,7 @@ import com.sug.project.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.QuestionSubmit;
 import com.sug.project.model.entity.User;
+import com.sug.project.model.enums.QuestionSubmitStatusEnum;
 import com.sug.project.service.QuestionService;
 import com.sug.project.service.QuestionSubmitService;
 import com.sug.project.service.UserService;
@@ -54,6 +55,8 @@ public class QuestionSubmitController {
         questionSubmitService.validQuestionSubmit(questionSubmit, true);
         User loginUser = userService.getLoginUser(request);
         questionSubmit.setUserId(loginUser.getId());
+        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
+        questionSubmit.setJudgeInfo("{}");
         boolean result = questionSubmitService.save(questionSubmit);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);

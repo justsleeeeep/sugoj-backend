@@ -7,6 +7,7 @@ import com.sug.project.exception.BusinessException;
 import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.QuestionSubmit;
 import com.sug.project.model.entity.User;
+import com.sug.project.model.enums.QuestionSubmitLanguageEnum;
 import com.sug.project.service.QuestionSubmitService;
 import com.sug.project.mapper.QuestionSubmitMapper;
 import com.sug.project.service.UserService;
@@ -16,13 +17,13 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
-* @author 钱晨
-* @description 针对表【question_submit(题目提交)】的数据库操作Service实现
-* @createDate 2026-05-15 15:40:01
-*/
+ * @author 钱晨
+ * @description 针对表【question_submit(题目提交)】的数据库操作Service实现
+ * @createDate 2026-05-15 15:40:01
+ */
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
-    implements QuestionSubmitService{
+        implements QuestionSubmitService {
 
     @Resource
     private UserService userService;
@@ -59,26 +60,23 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
 
         Long questionid = questionSubmit.getQuestionId();
-        String language= questionSubmit.getLanguage();
+        String language = questionSubmit.getLanguage();
         String code = questionSubmit.getCode();
-
-
-        // ------------------ 1. 新增时的必填项校验 ------------------
+        QuestionSubmitLanguageEnum languageEnum = QuestionSubmitLanguageEnum.getEnumByValue(language);
+        if (languageEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "语言不存在");
+        }
         if (isadd) {
             if (questionid == null || questionid <= 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目 id 不合法");
             }
-            // 新增题目时，所有核心字段（包括判题用例和配置）均不能为空
-            if (StringUtils.isAnyBlank(language,code)) {
+            if (StringUtils.isAnyBlank(language, code)) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "题目输入不完整（语言、代码均为必填项）");
             }
         }
-
-        // ------------------ 2. 通用的字段长度规则校验（有值时才校验） ------------------
         if (StringUtils.isNotBlank(code) && code.length() > 8096) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "标签总长度不能超过1024个字符");
         }
-
 
 
     }

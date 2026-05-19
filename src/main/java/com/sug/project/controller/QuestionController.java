@@ -122,6 +122,15 @@ public class QuestionController {
         }
         Question question = new Question();
         BeanUtils.copyProperties(questionUpdateRequest, question);
+        if (questionUpdateRequest.getTags() != null) {
+            question.setTags(JSONUtil.toJsonStr(questionUpdateRequest.getTags()));
+        }
+        if (questionUpdateRequest.getJudgeCase() != null) {
+            question.setJudgeCase(JSONUtil.toJsonStr(questionUpdateRequest.getJudgeCase()));
+        }
+        if (questionUpdateRequest.getJudgeConfig() != null) {
+            question.setJudgeConfig(JSONUtil.toJsonStr(questionUpdateRequest.getJudgeConfig()));
+        }
         // 参数校验
         questionService.validQuestion(question, false);
         User user = userService.getLoginUser(request);

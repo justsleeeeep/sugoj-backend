@@ -23,7 +23,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     public void incrementSubmitNum(Long questionId) {
         LambdaUpdateWrapper<Question> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(Question::getId, questionId)
-                .setSql("submit_num = submit_num + 1");
+                .setSql("submitNum = submitNum + 1");
         boolean success = this.update(wrapper);
         if (!success) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "题目不存在");
