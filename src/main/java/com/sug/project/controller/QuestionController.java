@@ -15,6 +15,7 @@ import com.sug.project.model.dto.question.QuestionQueryRequest;
 import com.sug.project.model.dto.question.QuestionUpdateRequest;
 import com.sug.project.model.entity.Question;
 import com.sug.project.model.entity.User;
+import com.sug.project.model.vo.QuestionVO;
 import com.sug.project.service.QuestionService;
 import com.sug.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 问题接口
@@ -41,6 +43,7 @@ public class QuestionController {
 
     @Resource
     private UserService userService;
+
 
     // region 增删改查
 
@@ -155,12 +158,17 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<Question> getQuestionById(long id) {
+    public BaseResponse<QuestionVO> getQuestionById(long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Question question = questionService.getById(id);
-        return ResultUtils.success(question);
+        QuestionVO questionVO=new QuestionVO();
+        BeanUtils.copyProperties(question, questionVO);
+        if (question.getTags() != null) {
+            questionVO.setTags(JSONUtil.toList(question.getTags(), String.class));
+        }
+        return ResultUtils.success(questionVO);
     }
 
     /**
@@ -189,7 +197,7 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/list/page")
-    public BaseResponse<Page<Question>> listQuestionByPage(QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
+    public BaseResponse<Page<QuestionVO>> listQuestionByPage(QuestionQueryRequest questionQueryRequest, HttpServletRequest request) {
         if (questionQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -211,7 +219,23 @@ public class QuestionController {
         queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<Question> questionPage = questionService.page(new Page<>(current, size), queryWrapper);
-        return ResultUtils.success(questionPage);
+        Page<QuestionVO> questionVOPage = new Page<>(
+                questionPage.getCurrent(),
+                questionPage.getSize(),
+                questionPage.getTotal()
+        );
+
+        List<QuestionVO> questionVOList = questionPage.getRecords().stream().map(question -> {
+            QuestionVO questionVO = new QuestionVO();
+            BeanUtils.copyProperties(question, questionVO);
+            if (question.getTags() != null) {
+                questionVO.setTags(JSONUtil.toList(question.getTags(), String.class));
+            }
+            return questionVO;
+        }).collect(Collectors.toList());
+
+        questionVOPage.setRecords(questionVOList);
+        return ResultUtils.success(questionVOPage);
     }
 
     // endregion
