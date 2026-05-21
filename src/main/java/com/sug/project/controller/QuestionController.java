@@ -152,13 +152,13 @@ public class QuestionController {
     }
 
     /**
-     * 根据 id 获取
+     * 根据 id 获取脱敏
      *
      * @param id
      * @return
      */
-    @GetMapping("/get")
-    public BaseResponse<QuestionVO> getQuestionById(long id) {
+    @GetMapping("/get/vo")
+    public BaseResponse<QuestionVO> getQuestionByIdVO(long id) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -169,6 +169,25 @@ public class QuestionController {
             questionVO.setTags(JSONUtil.toList(question.getTags(), String.class));
         }
         return ResultUtils.success(questionVO);
+    }
+    /**
+     * 根据 id 获取全部
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/get")
+    public BaseResponse<Question> getQuestionById(long id,HttpServletRequest request) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser =userService.getLoginUser(request);
+        Question question = questionService.getById(id);
+        if((!question.getUserId().equals(loginUser.getId()))&&(!userService.isAdmin(request)))
+        {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        return ResultUtils.success(question);
     }
 
     /**
