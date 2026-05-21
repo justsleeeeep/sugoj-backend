@@ -119,7 +119,7 @@ public class QuestionController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest,
-                                            HttpServletRequest request) {
+                                                HttpServletRequest request) {
         if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -163,13 +163,14 @@ public class QuestionController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Question question = questionService.getById(id);
-        QuestionVO questionVO=new QuestionVO();
+        QuestionVO questionVO = new QuestionVO();
         BeanUtils.copyProperties(question, questionVO);
         if (question.getTags() != null) {
             questionVO.setTags(JSONUtil.toList(question.getTags(), String.class));
         }
         return ResultUtils.success(questionVO);
     }
+
     /**
      * 根据 id 获取全部
      *
@@ -177,14 +178,13 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<Question> getQuestionById(long id,HttpServletRequest request) {
+    public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User loginUser =userService.getLoginUser(request);
+        User loginUser = userService.getLoginUser(request);
         Question question = questionService.getById(id);
-        if((!question.getUserId().equals(loginUser.getId()))&&(!userService.isAdmin(request)))
-        {
+        if ((!question.getUserId().equals(loginUser.getId())) && (!userService.isAdmin(request))) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         return ResultUtils.success(question);
@@ -233,8 +233,23 @@ public class QuestionController {
         if (size > 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        QueryWrapper<Question> queryWrapper = new QueryWrapper<>(questionQuery);
-        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
+        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.eq(questionQuery.getId() != null,
+                "id",
+                questionQuery.getId());
+
+        queryWrapper.like(StringUtils.isNotBlank(questionQuery.getTitle()),
+                "title",
+                questionQuery.getTitle());
+
+        queryWrapper.like(StringUtils.isNotBlank(questionQuery.getContent()),
+                "content",
+                questionQuery.getContent());
+
+        queryWrapper.like(StringUtils.isNotBlank(questionQuery.getTags()),
+                "tags",
+                questionQuery.getTags());
         queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<Question> questionPage = questionService.page(new Page<>(current, size), queryWrapper);
