@@ -22,13 +22,14 @@ class CodeSandboxTest {
     @Test
     void executeCode() {
         CodeSandbox codeSandbox=CodeSandboxFactory.newInstance(type);
+        codeSandbox=new CodeSandboxProxy(codeSandbox);
         String code="int main(){}";
         String language= QuestionSubmitLanguageEnum.CPLUSPLUS.getValue();
-        List<String>inputList = Arrays.asList("1 2","3,4");
+        List<String>inputList = Arrays.asList("1 2","3 4");
         ExecuteCodeRequest executeCodeRequest=ExecuteCodeRequest.builder()
                 .code(code)
                 .language(language)
-                .input(inputList)
+                .inputList(inputList)
                 .build();
         ExecuteCodeResponse executeCodeResponse=codeSandbox.executeCode(executeCodeRequest);
     }

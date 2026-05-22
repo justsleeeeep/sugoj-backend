@@ -1,18 +1,22 @@
 package com.sug.project.judge.codesandbox.model;
 
 import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ExecuteCodeResponse
 {
     /**
      * 输出结果
      */
-    private List<String> output;
+    private List<String> outputList;
     /**
      * 接口信息
      */
