@@ -1,10 +1,12 @@
 package com.sug.project.judge.codesandbox.model;
 
 import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 @Data
+@Builder
 public class ExecuteCodeResponse
 {
     /**
