@@ -5,6 +5,8 @@ import com.sug.project.common.BaseResponse;
 import com.sug.project.common.ErrorCode;
 import com.sug.project.common.ResultUtils;
 import com.sug.project.exception.BusinessException;
+import com.sug.project.judge.JudgeService;
+import com.sug.project.judge.JudgeServiceImpl;
 import com.sug.project.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.QuestionSubmit;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 问题接口
@@ -36,6 +39,8 @@ public class QuestionSubmitController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private JudgeService judgeService;
     @Resource QuestionService questionService;
     /**
      * 创建
@@ -64,6 +69,9 @@ public class QuestionSubmitController {
         Long questionId = questionSubmitAddRequest.getQuestionId();
         questionService.incrementSubmitNum(questionId);
         long newQuestionSubmitId = questionSubmit.getId();
+        CompletableFuture.runAsync(()->{
+            judgeService.doJudge(newQuestionSubmitId);
+        });
         return ResultUtils.success(newQuestionSubmitId);
     }
 
