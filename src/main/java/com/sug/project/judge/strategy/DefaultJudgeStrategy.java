@@ -1,10 +1,9 @@
 package com.sug.project.judge.strategy;
 
 import cn.hutool.json.JSONUtil;
-import com.sug.project.judge.codesandbox.model.ExecuteCodeResponse;
 import com.sug.project.model.dto.question.JudgeCase;
 import com.sug.project.model.dto.question.JudgeConfig;
-import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import com.sug.project.judge.codesandbox.model.JudgeInfo;
 import com.sug.project.model.entity.Question;
 import com.sug.project.model.enums.JudgeInfoMessageEnum;
 

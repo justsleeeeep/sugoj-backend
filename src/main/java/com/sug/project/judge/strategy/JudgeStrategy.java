@@ -1,6 +1,6 @@
 package com.sug.project.judge.strategy;
 
-import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import com.sug.project.judge.codesandbox.model.JudgeInfo;
 
 public interface JudgeStrategy {
     /**

@@ -8,16 +8,11 @@ import com.sug.project.judge.codesandbox.CodeSandboxFactory;
 import com.sug.project.judge.codesandbox.CodeSandboxProxy;
 import com.sug.project.judge.codesandbox.model.ExecuteCodeRequest;
 import com.sug.project.judge.codesandbox.model.ExecuteCodeResponse;
-import com.sug.project.judge.strategy.DefaultJudgeStrategy;
 import com.sug.project.judge.strategy.JudgeContext;
-import com.sug.project.judge.strategy.JudgeStrategy;
 import com.sug.project.model.dto.question.JudgeCase;
-import com.sug.project.model.dto.question.JudgeConfig;
-import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import com.sug.project.judge.codesandbox.model.JudgeInfo;
 import com.sug.project.model.entity.Question;
 import com.sug.project.model.entity.QuestionSubmit;
-import com.sug.project.model.enums.JudgeInfoMessageEnum;
-import com.sug.project.model.enums.QuestionSubmitLanguageEnum;
 import com.sug.project.model.enums.QuestionSubmitStatusEnum;
 import com.sug.project.service.QuestionService;
 import com.sug.project.service.QuestionSubmitService;
@@ -25,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

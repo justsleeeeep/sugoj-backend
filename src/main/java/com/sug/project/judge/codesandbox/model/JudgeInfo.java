@@ -1,4 +1,4 @@
-package com.sug.project.model.dto.questionsubmit;
+package com.sug.project.judge.codesandbox.model;
 import lombok.Data;
 
 @Data

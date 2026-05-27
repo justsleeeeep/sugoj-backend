@@ -3,7 +3,7 @@ package com.sug.project.judge.codesandbox.impl;
 import com.sug.project.judge.codesandbox.CodeSandbox;
 import com.sug.project.judge.codesandbox.model.ExecuteCodeRequest;
 import com.sug.project.judge.codesandbox.model.ExecuteCodeResponse;
-import com.sug.project.model.dto.questionsubmit.JudgeInfo;
+import com.sug.project.judge.codesandbox.model.JudgeInfo;
 import com.sug.project.model.enums.JudgeInfoMessageEnum;
 import com.sug.project.model.enums.QuestionSubmitStatusEnum;
 

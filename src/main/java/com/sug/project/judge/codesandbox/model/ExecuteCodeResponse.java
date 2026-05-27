@@ -1,6 +1,5 @@
 package com.sug.project.judge.codesandbox.model;
 
-import com.sug.project.model.dto.questionsubmit.JudgeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
