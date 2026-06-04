@@ -10,13 +10,19 @@ import com.sug.project.common.ErrorCode;
 import com.sug.project.common.ResultUtils;
 import com.sug.project.constant.CommonConstant;
 import com.sug.project.exception.BusinessException;
+import com.sug.project.judge.JudgeService;
 import com.sug.project.model.dto.question.QuestionAddRequest;
 import com.sug.project.model.dto.question.QuestionQueryRequest;
 import com.sug.project.model.dto.question.QuestionUpdateRequest;
+import com.sug.project.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.sug.project.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.sug.project.model.entity.Question;
+import com.sug.project.model.entity.QuestionSubmit;
 import com.sug.project.model.entity.User;
+import com.sug.project.model.enums.QuestionSubmitStatusEnum;
 import com.sug.project.model.vo.QuestionVO;
 import com.sug.project.service.QuestionService;
+import com.sug.project.service.QuestionSubmitService;
 import com.sug.project.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +50,9 @@ public class QuestionController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private QuestionSubmitService questionSubmitService;
 
 
     // region 增删改查
@@ -273,5 +283,63 @@ public class QuestionController {
     }
 
     // endregion
+
+
+    @Resource
+    private JudgeService judgeService;
+    /**
+     * 创建
+     *
+     * @param questionSubmitAddRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/questionsubmit/add")
+    public BaseResponse<Long> addQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest, HttpServletRequest request) {
+        if (questionSubmitAddRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        QuestionSubmit questionSubmit = new QuestionSubmit();
+        BeanUtils.copyProperties(questionSubmitAddRequest, questionSubmit);
+        // 校验
+        questionSubmitService.validQuestionSubmit(questionSubmit, true);
+        User loginUser = userService.getLoginUser(request);
+        questionSubmit.setUserId(loginUser.getId());
+        questionSubmit.setStatus(QuestionSubmitStatusEnum.WAITING.getValue());
+        questionSubmit.setJudgeInfo("{}");
+        boolean result = questionSubmitService.save(questionSubmit);
+        if (!result) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        Long questionId = questionSubmitAddRequest.getQuestionId();
+        questionService.incrementSubmitNum(questionId);
+        long newQuestionSubmitId = questionSubmit.getId();
+        CompletableFuture.runAsync(()->{
+            judgeService.doJudge(newQuestionSubmitId);
+        });
+        return ResultUtils.success(newQuestionSubmitId);
+    }
+
+    /**
+     * 分页获取题目提交列表
+     *
+     * @param questionSubmitQueryRequest
+     * @return
+     */
+    @GetMapping("/questionsubmit/list/page")
+    public BaseResponse<Page<QuestionSubmit>> listQuestionSubmitByPage(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        if (questionSubmitQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long current = questionSubmitQueryRequest.getCurrent();
+        long size = questionSubmitQueryRequest.getPageSize();
+        if (size > 50) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(
+                new Page<>(current, size),
+                questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
+        return ResultUtils.success(questionSubmitPage);
+    }
 
 }
