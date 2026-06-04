@@ -23,14 +23,27 @@ class CodeSandboxTest {
     void executeCode() {
         CodeSandbox codeSandbox=CodeSandboxFactory.newInstance(type);
         codeSandbox=new CodeSandboxProxy(codeSandbox);
-        String code="int main(){}";
-        String language= QuestionSubmitLanguageEnum.CPLUSPLUS.getValue();
-        List<String>inputList = Arrays.asList("1 2","3 4");
+        String code="import java.util.Scanner;\n" +
+                "\n" +
+                "public class Main {\n" +
+                "    public Main() {\n" +
+                "    }\n" +
+                "\n" +
+                "    public static void main(String[] var0) {\n" +
+                "        Scanner var1 = new Scanner(System.in);\n" +
+                "        int var2 = var1.nextInt();\n" +
+                "        int var3 = var1.nextInt();\n" +
+                "        System.out.println(\"结果 = \" + (var2 + var3));\n" +
+                "    }\n" +
+                "}";
+        String language= QuestionSubmitLanguageEnum.JAVA.getValue();
+        List<String>inputList = Arrays.asList("1 2","2 5");
         ExecuteCodeRequest executeCodeRequest=ExecuteCodeRequest.builder()
                 .code(code)
                 .language(language)
                 .inputList(inputList)
                 .build();
         ExecuteCodeResponse executeCodeResponse=codeSandbox.executeCode(executeCodeRequest);
+        System.out.println(executeCodeResponse);
     }
 }
