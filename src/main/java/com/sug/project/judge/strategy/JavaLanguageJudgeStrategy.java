@@ -11,7 +11,8 @@ import java.util.List;
 
 public class JavaLanguageJudgeStrategy implements JudgeStrategy {
     @Override
-    public JudgeInfo dojudge(JudgeContext judgeContext) {
+    public JudgeInfo dojudge(JudgeContext judgeContext)
+    {
         JudgeInfo judgeInfoResponse = new JudgeInfo();
         List<String> outList = judgeContext.getOutputList();
         JudgeInfo judgeInfo = judgeContext.getJudgeInfo();
@@ -23,6 +24,14 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
 
         List<JudgeCase> judgeCaseList = JSONUtil.toList(question.getJudgeCase(), JudgeCase.class);
         JudgeInfoMessageEnum judgeInfoMessageEnum = JudgeInfoMessageEnum.WAITING;
+        if(outList==null)
+        {
+            if(judgeInfo.getMessage().equals("compile error"))
+            {
+                judgeInfoResponse.setMessage(JudgeInfoMessageEnum.COMPILE_ERROR.toString());
+                return judgeInfoResponse;
+            }
+        }
         if (outList.size() != judgeCaseList.size()) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
             judgeInfoResponse.setMessage(judgeInfoMessageEnum.toString());
