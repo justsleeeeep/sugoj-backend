@@ -13,6 +13,7 @@ import com.sug.project.model.dto.question.JudgeCase;
 import com.sug.project.judge.codesandbox.model.JudgeInfo;
 import com.sug.project.model.entity.Question;
 import com.sug.project.model.entity.QuestionSubmit;
+import com.sug.project.model.enums.JudgeInfoMessageEnum;
 import com.sug.project.model.enums.QuestionSubmitStatusEnum;
 import com.sug.project.service.QuestionService;
 import com.sug.project.service.QuestionSubmitService;
@@ -80,6 +81,7 @@ public class JudgeServiceImpl implements JudgeService {
         JudgeInfo judgeInfoResponse =judgeManager.dojudge(judgeContext);
 
         QuestionSubmit questionSubmitUpdateJudgeInfo= new QuestionSubmit();
+        questionSubmitUpdateJudgeInfo.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
         questionSubmitUpdateJudgeInfo.setId(questionSubmitId);
         questionSubmitUpdateJudgeInfo.setJudgeInfo(judgeInfoResponse.toString());
         boolean updateJudgeInfo=questionSubmitService.updateById(questionSubmitUpdateJudgeInfo);
@@ -88,6 +90,16 @@ public class JudgeServiceImpl implements JudgeService {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"题目提交结果更新失败");
         }
         QuestionSubmit newQuestionSubmit=questionSubmitService.getById(questionSubmitId);
+        String Test=JudgeInfoMessageEnum.ACCEPTED.toString();
+        if(judgeInfoResponse.getMessage().equals(JudgeInfoMessageEnum.ACCEPTED.toString()))
+        {
+            question.setAcceptNum(question.getAcceptNum()+1);
+            boolean updateAcceptNum = questionService.updateById(question);
+            if(!updateAcceptNum)
+            {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"题目AC数量更新失败");
+            }
+        }
         return newQuestionSubmit;
     }
 }
